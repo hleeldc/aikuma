@@ -21,6 +21,7 @@ apply plugin: 'maven-publish'
 
     sourceSets.main.scala {
         srcDir project.projectDir
+        exclude 'gcm-client'
     }
 
     compileScala {
