@@ -1,0 +1,51 @@
+apply plugin: 'eclipse'
+apply plugin: 'scala'
+apply plugin: 'maven-publish'
+
+    group = 'org.lp20'
+
+    sourceCompatibility = '1.6'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'org.scala-lang:scala-library:2.11.1'
+        compile 'org.igniterealtime.smack:smack-core:4.0.7'
+        compile 'org.igniterealtime.smack:smack-tcp:4.0.7'
+        compile('com.googlecode.json-simple:json-simple:1.1.1') {
+            exclude module: 'junit'
+        }
+    }
+
+    sourceSets.main.scala {
+        srcDir project.projectDir
+    }
+
+    compileScala {
+        scalaCompileOptions.fork = true
+        scalaCompileOptions.useAnt = false
+    }
+
+    jar.baseName = 'aikuma-gcm-server'
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifactId = jar.baseName
+            }
+        }
+    }
+
+task runTest(type: JavaExec) {
+    main = 'XmppClient'
+    classpath sourceSets.main.runtimeClasspath
+}
+
+task fatJar(type: Jar) {
+    baseName = jar.baseName + '-all'
+    from { configurations.compile.collect {it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
